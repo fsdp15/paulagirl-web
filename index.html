@@ -10,9 +10,11 @@
   :root {
     --bg: #1b1b1f;
     --panel: #26262c;
+    --line: #3a3a43;
     --text: #e8e8ea;
     --muted: #9a9aa4;
-    --accent: #8ab4f8;
+    --accent: #e8789e;   /* PaulaGirl's dress, lightened for a dark page */
+    --cream: #e4ddc6;    /* the icon tile */
   }
   * { box-sizing: border-box; }
   body {
@@ -21,41 +23,57 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
     gap: 1.25rem;
-    padding: 1.5rem;
-    background: var(--bg);
+    padding: 1.5rem 1rem 2.5rem;
+    background: radial-gradient(ellipse at top, #2a2430 0%, var(--bg) 60%);
     color: var(--text);
     font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
   }
-  h1 { margin: 0; font-size: 1.4rem; font-weight: 600; letter-spacing: -0.01em; }
-  h1 span { color: var(--muted); font-weight: 400; font-size: 0.95rem; }
+
+  header { display: flex; align-items: center; gap: 0.9rem; }
+  .logo { width: 56px; height: 56px; image-rendering: pixelated; }
+  h1 { margin: 0; font-size: 1.6rem; font-weight: 700; letter-spacing: -0.01em; color: var(--cream); }
+  .tagline { margin: 0; color: var(--muted); font-size: 0.9rem; }
+
+  /* A plain console bezel around the screen, with a power light that is on
+     while a game runs (WebMain adds the "on" class). */
+  .bezel {
+    padding: 1.1rem 1.1rem 0.8rem;
+    background: #34343d;
+    border-radius: 14px 14px 44px 14px;
+    box-shadow: 0 10px 36px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  }
+  .power { display: flex; align-items: center; gap: 0.4rem; margin-top: 0.6rem;
+           color: var(--muted); font-size: 0.7rem; letter-spacing: 0.12em; }
+  .power i { width: 8px; height: 8px; border-radius: 50%; background: #4a2630; }
+  .power.on i { background: #ff4d6d; box-shadow: 0 0 8px #ff4d6d; }
 
   /* The PPU renders 160x144; scale up with hard pixel edges rather than
      the browser's default smoothing, which would blur the DMG art. */
   #screen {
-    width: min(90vw, 640px);
+    display: block;
+    width: min(86vw, 560px);
     aspect-ratio: 160 / 144;
     height: auto;
     image-rendering: pixelated;
     background: #000;
-    border-radius: 6px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    border-radius: 4px;
   }
 
   .panel {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 0.6rem;
-    padding: 1rem 1.5rem;
+    justify-content: center;
+    gap: 0.6rem 1.25rem;
+    padding: 0.9rem 1.25rem;
     background: var(--panel);
-    border-radius: 8px;
+    border-radius: 10px;
   }
-  #status { color: var(--muted); font-size: 0.9rem; min-height: 1.4em; text-align: center; }
+  #status { flex-basis: 100%; margin: 0; color: var(--muted); font-size: 0.9rem; min-height: 1.4em; text-align: center; }
   .source { display: flex; align-items: center; gap: 0.5rem; color: var(--muted); font-size: 0.9rem; }
-  .source select {
-    padding: 0.25rem 0.5rem;
+  select, button {
+    padding: 0.3rem 0.6rem;
     border: 1px solid #45454f;
     border-radius: 5px;
     background: #32323a;
@@ -63,6 +81,8 @@
     font: inherit;
     font-size: 0.9rem;
   }
+  button { cursor: pointer; }
+  button:hover { border-color: var(--accent); }
   input[type=file] { color: var(--muted); font: inherit; font-size: 0.9rem; max-width: 100%; }
   input[type=file]::file-selector-button {
     margin-right: 0.75rem;
@@ -70,13 +90,25 @@
     border: 0;
     border-radius: 5px;
     background: var(--accent);
-    color: #16161a;
+    color: #1b1b1f;
     font: inherit;
     font-weight: 600;
     cursor: pointer;
   }
+
+  .help { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; width: min(100%, 46rem); }
+  .card { flex: 1 1 19rem; padding: 1rem 1.25rem; background: var(--panel); border-radius: 10px; }
+  .card h2 { margin: 0 0 0.6rem; font-size: 1rem; color: var(--cream); }
+  .card table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  .card th { text-align: left; font-weight: 500; color: var(--muted); padding: 0.25rem 0.5rem 0.25rem 0; white-space: nowrap; }
+  .card td { padding: 0.25rem 0; }
+  .card td span { color: var(--muted); }
+  button.bind { min-width: 7.5rem; text-align: center; }
+  button.bind.waiting { border-color: var(--accent); color: var(--accent); }
+  .hint { margin: 0.7rem 0 0; color: var(--muted); font-size: 0.85rem; }
+  .card .reset { margin-top: 0.6rem; font-size: 0.85rem; }
   kbd {
-    padding: 0.1rem 0.4rem;
+    padding: 0.05rem 0.35rem;
     border: 1px solid #45454f;
     border-bottom-width: 2px;
     border-radius: 4px;
@@ -84,13 +116,22 @@
     font: inherit;
     font-size: 0.8rem;
   }
-  .controls { color: var(--muted); font-size: 0.85rem; text-align: center; max-width: 30rem; }
+  .note { margin: 0; color: var(--muted); font-size: 0.85rem; text-align: center; max-width: 40rem; }
 </style>
 </head>
 <body>
-  <h1>PaulaGirl <span>· Game Boy emulator</span></h1>
+  <header>
+    <img class="logo" alt="" src="data:image/png;base64,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">
+    <div>
+      <h1>PaulaGirl</h1>
+      <p class="tagline">A Game Boy emulator in your browser</p>
+    </div>
+  </header>
 
-  <canvas id="screen" width="160" height="144"></canvas>
+  <div class="bezel">
+    <canvas id="screen" width="160" height="144"></canvas>
+    <div class="power" id="power"><i></i>POWER</div>
+  </div>
 
   <div class="panel">
     <input type="file" id="rom" accept=".gb">
@@ -103,16 +144,42 @@
     <p id="status">Loading…</p>
   </div>
 
-  <p class="controls">
-    <kbd>←</kbd> <kbd>↑</kbd> <kbd>↓</kbd> <kbd>→</kbd> D-pad ·
-    <kbd>Z</kbd> A · <kbd>X</kbd> B ·
-    <kbd>Enter</kbd> Start · <kbd>Right Shift</kbd> Select
-    <br>
-    On Gamepad: D-pad or left stick, right face button A, bottom face button B.
-    Browsers hide a controller until you press something on it, so give it a
-    button press after plugging in.
-    <br>
-    Only ROM-only cartridges (type <code>0x00</code>) load today — MBC1 isn't implemented yet.
+  <div class="help">
+    <section class="card">
+      <h2>Keyboard</h2>
+      <!-- WebMain fills in each key and handles the clicks. -->
+      <table>
+        <tr><th>Up</th>     <td><button class="bind" id="bind-UP"></button></td></tr>
+        <tr><th>Down</th>   <td><button class="bind" id="bind-DOWN"></button></td></tr>
+        <tr><th>Left</th>   <td><button class="bind" id="bind-LEFT"></button></td></tr>
+        <tr><th>Right</th>  <td><button class="bind" id="bind-RIGHT"></button></td></tr>
+        <tr><th>A</th>      <td><button class="bind" id="bind-A"></button></td></tr>
+        <tr><th>B</th>      <td><button class="bind" id="bind-B"></button></td></tr>
+        <tr><th>Start</th>  <td><button class="bind" id="bind-START"></button></td></tr>
+        <tr><th>Select</th> <td><button class="bind" id="bind-SELECT"></button></td></tr>
+      </table>
+      <p class="hint">To change a key, click it, then press the new key. <kbd>Esc</kbd> cancels.</p>
+      <button class="reset" id="bind-reset">Reset to defaults</button>
+    </section>
+
+    <section class="card">
+      <h2>Gamepad</h2>
+      <table>
+        <tr><th>D-pad</th>  <td>D-pad or left stick</td></tr>
+        <tr><th>A</th>      <td>Right face button <span>(○ PlayStation, B Xbox)</span></td></tr>
+        <tr><th>B</th>      <td>Bottom face button <span>(✕ PlayStation, A Xbox)</span></td></tr>
+        <tr><th>Start</th>  <td>Start <span>(Options, Menu)</span></td></tr>
+        <tr><th>Select</th> <td>Select <span>(Share, View)</span></td></tr>
+      </table>
+      <p class="hint">Set Input to Gamepad, then press any button on the controller once.
+        The browser hides a controller from the page until you do.</p>
+    </section>
+  </div>
+
+  <p class="note">
+    Plays ROM-only and MBC1 cartridges, which covers most early Game Boy games.
+    No sound yet. Games that save lose their progress when you close the page.
+    Your ROM stays on your computer: nothing is uploaded.
   </p>
 
   <script type="text/javascript" src="paulagirl.js"></script>
