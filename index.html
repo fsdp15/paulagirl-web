@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PaulaGirl — Game Boy emulator</title>
+<!-- Inline so the page makes no extra requests (and doesn't 404 on favicon.ico). -->
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAE+ElEQVR4XsWXWUxUVxzGfWpBZJGlIDsIwzY4DPsqUNnXYZWlIxAQmUBEIQhMKLsw4BBABIMN1QgF2jS2MQZEqBShQETa2CUmTSF9oI0P9d0nv55zm5kyc2aGISXpTX6B3HPO9333nnPP/M+xY/uu169fGu3tfle/t7O+tre7/hf5iyPhH601qk099nsqrz93NiP3flv/gxl81BAP6sWa76y/ZTqrsbIwjeG+Fpi+Z6CC2fuGOB8di621r5kxWnirDMG9dj2efPHRfQT4eDHmlCQ7L0g8opAQFYaXW3PMWI0QT2469nY26phGNTa+/RIejo6MsYKOwmzcFl9AgpMX0qMi8eqHRUZDMxt1JABZHEyDKqECPmOqjqepNeSZ+egJy0RZYRajoYU1GuCNhgYl4ze74WBlyRhqosg1EJ1+qYcJ8IYGeKehQUmdpJQxcrK0wK3Gcix/0g5pWRZsjE24+1YGRrAxNIYo6Rx+2V5gtDTwjgZQv6kzgIO5OUaulWN7pl9JY3EGE/LOyHVGSxOHCmBucJx78s3JXryY7uPMtz6T4cmwFPVFaThpYKgS4NniLJKjIzD3YILR1SvAj1vzyEmNV4p2SwowWFeKpGABprovcwFu1IqREiqEvKYYieS+ou/VqhJIchLxbLwdZ308GG29AnwxeVPltdIAQ/WlWL3TgefkLSim4PmUDC3lOYjy9VTpvzj2MZaGpEcXoEGcgc37PViQN2G+9xoWZE34ZqiFhJFh7W438j4MVfZtLhFxUzPdVoO08CBGW68ANRXFKgEo7RfzMEeM+2Ny0B2QgYHk83g80Ey24hBlH76TPaZ7ajEru4rgMz5YeTLDaOsVQN2ccsrEFF1VxFQuxVft9Xg60oaKtFhlu6OFOWZ6r3BTcykvBcvzU4zufwpAsTA0QoCbM6LJnPMd7cjqP44PDE8g20UIaUgyJpskiBP6oDg3ndFU51ABfM1tEWrtAjcTKxRFhqEyNRY5AYGwNzJDros/+gOz0OmfhlQnX67/Ty/mGU11dAaQkVe837xJkIgu/3QkOngj3ekMxO4hiLPzRAUvHPIgap4Of0sHOJtZoq2xBr//uspoqqMzwNO5SQh47rAm22uTXxIGgrIxHJwLWWAm97T0fwW95F6JRxhcLaxwo6uR0dKGzgAUuosFePAwKi5BHnnNUkGSirGCBn4cJPm5GB/uYjR0cWAAuhvmxUdjebQVuWdDUO0Tw5hTKnkR6OtsYMYfxIEB6G/BLPmsNj7tRkFcuMYAQ4SP3IKPPsDSo0nwT7tyG8rd9mpkegu5RagegNLqlwJRSDi+33jI6OhCZ4CFh/dQJ87CRKsEDQXpqPKIZIwV9AeKkOLIx70xGaOjCxpAZ0HyYGYMjZcrICSf13Wy9aob70dGQoS5ezEaOuAKEp0lGUWcnYYaMvdy8hkOBuXopMwrEtL6KkZDC1xJdmBRWk8WYqazQC9EPH8M9koZDS3QovTgsnz31QpuyVs5hO6u6KkuRKC7C65UXeCKkY5L+VzlTNsnRnuZ8dohZbm+BxMKXeHRfnysjnQgQejL1QuVaecwJ29GfGQoft5+zIzRiuJgou/RjNZ39PiVYO/FfYoBZFHSADG2PNT6nkOEzWlczBbpWw3/ezRTXAcdTmmR6WxsDu+Tpzjo7wMNYH/CTHnP1sgUq0ufM2NV0HQ4VVz/x/H8bz3AE+yf63oAAAAAAElFTkSuQmCC">
+<style>
+  :root {
+    --bg: #1b1b1f;
+    --panel: #26262c;
+    --text: #e8e8ea;
+    --muted: #9a9aa4;
+    --accent: #8ab4f8;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.25rem;
+    padding: 1.5rem;
+    background: var(--bg);
+    color: var(--text);
+    font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  h1 { margin: 0; font-size: 1.4rem; font-weight: 600; letter-spacing: -0.01em; }
+  h1 span { color: var(--muted); font-weight: 400; font-size: 0.95rem; }
+
+  /* The PPU renders 160x144; scale up with hard pixel edges rather than
+     the browser's default smoothing, which would blur the DMG art. */
+  #screen {
+    width: min(90vw, 640px);
+    aspect-ratio: 160 / 144;
+    height: auto;
+    image-rendering: pixelated;
+    background: #000;
+    border-radius: 6px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  }
+
+  .panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 1rem 1.5rem;
+    background: var(--panel);
+    border-radius: 8px;
+  }
+  #status { color: var(--muted); font-size: 0.9rem; min-height: 1.4em; text-align: center; }
+  .source { display: flex; align-items: center; gap: 0.5rem; color: var(--muted); font-size: 0.9rem; }
+  .source select {
+    padding: 0.25rem 0.5rem;
+    border: 1px solid #45454f;
+    border-radius: 5px;
+    background: #32323a;
+    color: var(--text);
+    font: inherit;
+    font-size: 0.9rem;
+  }
+  input[type=file] { color: var(--muted); font: inherit; font-size: 0.9rem; max-width: 100%; }
+  input[type=file]::file-selector-button {
+    margin-right: 0.75rem;
+    padding: 0.4rem 0.9rem;
+    border: 0;
+    border-radius: 5px;
+    background: var(--accent);
+    color: #16161a;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  kbd {
+    padding: 0.1rem 0.4rem;
+    border: 1px solid #45454f;
+    border-bottom-width: 2px;
+    border-radius: 4px;
+    background: #32323a;
+    font: inherit;
+    font-size: 0.8rem;
+  }
+  .controls { color: var(--muted); font-size: 0.85rem; text-align: center; max-width: 30rem; }
+</style>
+</head>
+<body>
+  <h1>PaulaGirl <span>· Game Boy emulator</span></h1>
+
+  <canvas id="screen" width="160" height="144"></canvas>
+
+  <div class="panel">
+    <input type="file" id="rom" accept=".gb">
+    <label class="source">Input
+      <select id="input-source">
+        <option value="KEYBOARD">Keyboard</option>
+        <option value="GAMEPAD">Gamepad</option>
+      </select>
+    </label>
+    <p id="status">Loading…</p>
+  </div>
+
+  <p class="controls">
+    <kbd>←</kbd> <kbd>↑</kbd> <kbd>↓</kbd> <kbd>→</kbd> D-pad ·
+    <kbd>Z</kbd> A · <kbd>X</kbd> B ·
+    <kbd>Enter</kbd> Start · <kbd>Right Shift</kbd> Select
+    <br>
+    On Gamepad: D-pad or left stick, right face button A, bottom face button B.
+    Browsers hide a controller until you press something on it, so give it a
+    button press after plugging in.
+    <br>
+    Only ROM-only cartridges (type <code>0x00</code>) load today — MBC1 isn't implemented yet.
+  </p>
+
+  <script type="text/javascript" src="paulagirl.js"></script>
+  <script type="text/javascript">main();</script>
+</body>
+</html>
