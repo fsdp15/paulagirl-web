@@ -106,6 +106,9 @@
   button.bind { min-width: 7.5rem; text-align: center; }
   button.bind.waiting { border-color: var(--accent); color: var(--accent); }
   .hint { margin: 0.7rem 0 0; color: var(--muted); font-size: 0.85rem; }
+  /* A refused key keeps the same spot so the table doesn't jump; only the
+     colour changes, which is enough to read as "that didn't take". */
+  .hint.refused { color: var(--accent); }
   .card .reset { margin-top: 0.6rem; font-size: 0.85rem; }
   kbd {
     padding: 0.05rem 0.35rem;
@@ -159,7 +162,7 @@
         <tr><th>Start</th>  <td><button class="bind" id="bind-START"></button></td></tr>
         <tr><th>Select</th> <td><button class="bind" id="bind-SELECT"></button></td></tr>
       </table>
-      <p class="hint">To change a key, click it, then press the new key. <kbd>Esc</kbd> cancels.</p>
+      <p class="hint" id="bind-hint">To change a key, click it, then press the new key. Esc cancels.</p>
       <button class="reset" id="bind-reset">Reset to defaults</button>
     </section>
 
@@ -183,7 +186,7 @@
     Your ROM stays on your computer: nothing is uploaded.
   </p>
 
-  <script type="text/javascript" src="paulagirl.js?v=22190c2"></script>
+  <script type="text/javascript" src="paulagirl.js?v=3506fd1"></script>
   <script type="text/javascript">main();</script>
 </body>
 </html>
