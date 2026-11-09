@@ -17,6 +17,9 @@
     --cream: #e4ddc6;    /* the icon tile */
   }
   * { box-sizing: border-box; }
+  /* The panel sets display:flex, and a class beats the browser's own
+     [hidden] { display: none }, so hidden elements need saying twice. */
+  [hidden] { display: none !important; }
   body {
     margin: 0;
     min-height: 100vh;
@@ -109,6 +112,9 @@
   /* A refused key keeps the same spot so the table doesn't jump; only the
      colour changes, which is enough to read as "that didn't take". */
   .hint.refused { color: var(--accent); }
+  /* Fixed width so the number changing each second doesn't shuffle the row. */
+  .fps { min-width: 4.5rem; color: var(--muted); font-size: 0.85rem;
+         font-variant-numeric: tabular-nums; }
   .card .reset { margin-top: 0.6rem; font-size: 0.85rem; }
   kbd {
     padding: 0.05rem 0.35rem;
@@ -146,6 +152,36 @@
     </label>
     <label class="source"><input type="checkbox" id="boot-rom" checked> Boot screen</label>
     <p id="status">Loading…</p>
+  </div>
+
+  <!-- Emulation controls. Deliberately buttons rather than keyboard shortcuts:
+       every key here could also be bound to a Game Boy button, and a shortcut
+       that sometimes pauses the game instead of jumping is worse than a click. -->
+  <div class="panel" id="controls" hidden>
+    <button id="pause">Pause</button>
+    <button id="reset">Reset</button>
+    <button id="screenshot">Screenshot</button>
+    <label class="source">Speed
+      <select id="speed">
+        <option value="1">1x</option>
+        <option value="2">2x</option>
+        <option value="4">4x</option>
+        <option value="8">8x</option>
+      </select>
+    </label>
+    <label class="source"><input type="checkbox" id="show-fps"> FPS</label>
+    <span class="fps" id="fps"></span>
+  </div>
+
+  <!-- Save states. The quick slot lives in the browser, one per game; the file
+       buttons write the same .state the desktop app reads. -->
+  <div class="panel" id="states" hidden>
+    <button id="quick-save">Quick save</button>
+    <button id="quick-load">Quick load</button>
+    <button id="state-download">Save to file</button>
+    <label class="source filebtn">Load from file
+      <input type="file" id="state-upload" accept=".state">
+    </label>
   </div>
 
   <div class="help">
@@ -186,7 +222,7 @@
     Your ROM stays on your computer: nothing is uploaded.
   </p>
 
-  <script type="text/javascript" src="paulagirl.js?v=3506fd1"></script>
+  <script type="text/javascript" src="paulagirl.js?v=dbda058"></script>
   <script type="text/javascript">main();</script>
 </body>
 </html>
